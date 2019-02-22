@@ -1,0 +1,4 @@
+*firstUrl http://localhost/Regex-crawler/index.html
+*regex ([A-Fa-f0-9]{2}([A-Fa-f0-9]{4}))
+*limit 10000
+*urlRegex http://localhost/Regex-crawler/subpage[0-8]{1}\.html
