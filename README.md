@@ -16,8 +16,8 @@ Example settings file, where searching are started from http://localhost/Regex-c
 *urlRegex http://localhost/Regex-crawler/subpage[0-8]{1}\.html
 
 # Usage.
-To start program, enter to terminal: [program_name] [config file]
-Regex-crawler will generate Sqlite3 database with tables "results" and "urlsNoResults". Every record in table result has: Id, url where result was found, regular expressions for match and regex groups for match. Table urlsNoResults has only urls addresses without any result. Urls that aren't match to any rule *urlRegex will be ignored. 
+To start program, enter to terminal: [program_name] [settings file name] [s] [t]
+Regex-crawler will generate Sqlite3 database with tables "results" and "urlsNoResults" or readable text file. You can generate both database and text file at the same time. Every record in table result has: Id, url where result was found, regular expressions for match and regex groups for match. Table urlsNoResults has only urls addresses without any result. Urls that aren't match to any rule *urlRegex will be ignored. 
 
 # Requirements.
 To run this program , you need a Python 3.7.2 or newer with installed libares: requests, datetime, os and bs4.
