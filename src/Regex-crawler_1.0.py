@@ -116,19 +116,41 @@ def saveToDatabse(results, linksWithoutResults, settings, databaseCursor):
                insertIntoQuery += ',""'
           insertIntoQuery += ');'
           databaseCursor.execute(insertIntoQuery)
+def saveToTextFile(results, linksWithoutResults, fileName):
+     resultFile = open(fileName, "w")
+     resultFile.write("Results:\n\n")
+     for i in results:
+          resultFile.write("Url: " + i[0] + "\n")
+          resultFile.write("Regex: " + i[1] + "\n")
+          resultFile.write("Results:\n")
+          for j in range(2, len(i), 1):
+               resultFile.write(i[j] + "\n")
+          resultFile.write("\n")
+     resultFile.write("Links without results:\n\n")
+     for i in linksWithoutResults:
+          resultFile.write(i + "\n")
+     resultFile.close()
 def main():
-     if len(sys.argv) != 2:
-          print('Invalid number of arguments. Usage:\n' + os.path.basename(sys.argv[0]) + ' [settings_file_name]')
+     if len(sys.argv) < 3 or "s" not in sys.argv[2:] and "t" not in sys.argv[2:]:
+          print('Invalid arguments. Usage:\n' + os.path.basename(sys.argv[0]) + ' [settings_file_name] [s] [t]')
+          print('s - save results to Sqlite3 database.\nt - save results to text file.')
           return
      firstUrl, limit, regexs, urlRegexs, isValid = getSettingsFromFile(sys.argv[1])
      if(isValid == False):
           print("Invalid settings file.")
           return
+     print("Searching...")
      results, linksWithoutResults = search(firstUrl, limit, regexs, urlRegexs)
-     fileName = "Regex-crawler-" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f") + ".db"
-     conn = sqlite3.connect(fileName)
-     c = conn.cursor()
-     saveToDatabse(results, linksWithoutResults, (firstUrl, limit, regexs, urlRegexs, isValid), c)
-     conn.commit()
-     conn.close()
+     baseFileName = "Regex-crawler-" + datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S-%f")
+     if "s" in sys.argv[2:]:
+          print("Saving to Sqlite3 database...")
+          conn = sqlite3.connect(baseFileName + ".db")
+          c = conn.cursor()
+          saveToDatabse(results, linksWithoutResults, (firstUrl, limit, regexs, urlRegexs, isValid), c)
+          conn.commit()
+          conn.close()
+     if "t" in sys.argv[2:]:
+          print("Saving to text file...")
+          saveToTextFile(results, linksWithoutResults, baseFileName + ".txt")
+     print("Done")
 main()
