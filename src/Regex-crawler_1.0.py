@@ -98,8 +98,8 @@ def saveToDatabse(results, linksWithoutResults, settings, databaseCursor):
      databaseCursor.execute('CREATE TABLE urlsNoResults(linkId INTEGER PRIMARY KEY, url text);')
      createTableQuery = '''CREATE TABLE results
              (resultId INTEGER PRIMARY KEY, url text, pattern text, group1 text'''
-     for i in range(2, numberOfGroups+2, 1):
-          createTableQuery += ', group' + str(i)
+     for i in range(2, numberOfGroups+1, 1):
+          createTableQuery += ', group' + str(i) + ' text'
      createTableQuery += ');'
      databaseCursor.execute(createTableQuery)
      for i in linksWithoutResults:
@@ -112,7 +112,7 @@ def saveToDatabse(results, linksWithoutResults, settings, databaseCursor):
           for j in range(1, len(i), 1):
                insertIntoQuery += '","' + i[j]
           insertIntoQuery += '"'
-          for j in range(0, 4 - len(i), 1):
+          for j in range(0, 2 + numberOfGroups - len(i), 1):
                insertIntoQuery += ',""'
           insertIntoQuery += ');'
           databaseCursor.execute(insertIntoQuery)
