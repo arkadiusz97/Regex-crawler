@@ -78,20 +78,24 @@ def getSettingsFromFile(fileName):
      urlRegexs = []
      firstUrl = ""
      limit = 0
-     isValid = True
-     with open(fileName, "r", encoding="utf-8") as resultFile:
-          for line in resultFile:
-               resultFromLine = re.search(r"\*(.*) (.*)", line)
-               if resultFromLine.group(1) == 'regex':
-                    regexs.append(resultFromLine.group(2))
-               elif resultFromLine.group(1) == 'firstUrl':
-                    firstUrl = resultFromLine.group(2)
-               elif resultFromLine.group(1) == 'limit':
-                    limit = int(resultFromLine.group(2))
-               elif resultFromLine.group(1) == 'urlRegex':
-                    urlRegexs.append(resultFromLine.group(2))
+     isValid = 0#0 - File is valid.
+     try:
+          resultFile = open(fileName, "r", encoding="utf-8")
+     except FileNotFoundError:
+          isValid = 1
+          return firstUrl, limit, regexs, urlRegexs, isValid
+     for line in resultFile:
+          resultFromLine = re.search(r"\*(.*) (.*)", line)
+          if resultFromLine.group(1) == 'regex':
+               regexs.append(resultFromLine.group(2))
+          elif resultFromLine.group(1) == 'firstUrl':
+               firstUrl = resultFromLine.group(2)
+          elif resultFromLine.group(1) == 'limit':
+               limit = int(resultFromLine.group(2))
+          elif resultFromLine.group(1) == 'urlRegex':
+               urlRegexs.append(resultFromLine.group(2))
      if limit == 0 or not regexs or firstUrl == "":
-          isValid = False
+          isValid = 2#File exists, but is invalid.
      return firstUrl, limit, regexs, urlRegexs, isValid
 def saveToDatabse(results, linksWithoutResults, settings, databaseCursor):
      numberOfGroups = max([re.compile(m).groups for m in settings[2]])
@@ -136,8 +140,11 @@ def main():
           print('s - save results to Sqlite3 database.\nt - save results to text file.')
           return
      firstUrl, limit, regexs, urlRegexs, isValid = getSettingsFromFile(sys.argv[1])
-     if(isValid == False):
+     if(isValid == 2):
           print("Invalid settings file.")
+          return
+     if(isValid == 1):
+          print("This settings file doesn't exists.")
           return
      print("Searching...")
      results, linksWithoutResults = search(firstUrl, limit, regexs, urlRegexs)
