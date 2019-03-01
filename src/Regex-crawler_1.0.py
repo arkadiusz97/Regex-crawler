@@ -85,7 +85,7 @@ def getSettingsFromFile(fileName):
           isValid = 1
           return firstUrl, limit, regexs, urlRegexs, isValid
      for line in resultFile:
-          resultFromLine = re.search(r"\*(.*) (.*)", line)
+          resultFromLine = re.search(r"\*([^ ]+)(.*)", line)
           if resultFromLine.group(1) == 'regex':
                regexs.append(resultFromLine.group(2))
           elif resultFromLine.group(1) == 'firstUrl':
